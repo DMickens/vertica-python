@@ -53,3 +53,6 @@ nosetests.xml
 
 # backup files end in ~
 *~
+
+#tox
+tox.ini
