@@ -860,13 +860,14 @@ class SimpleQueryTestCase(VerticaPythonIntegrationTestCase):
             shutil.copy(f, f + suffix)
         with self._connect() as conn:
             cur = conn.cursor()
+            cur.execute("DROP TABLE IF EXISTS {0}".format(self._table))
             cur.execute("CREATE TABLE {0} (a INT, b VARCHAR(9))".format(self._table))
             cur.execute(
                 "COPY {} FROM LOCAL '{}' DELIMITER ',' ENFORCELENGTH"
                 .format(self._table, os.path.join(fdir, '*' + suffix)))
+            for f in files:
+                os.remove(f + suffix)
             self.assertListOfListsEqual(cur.fetchall(), [[7]])
-        for f in files:
-            os.remove(f + suffix)
 
     @parameterized.expand([(True,), (False,)])
     def test_copy_local_file_multistat(self, fetch_results):
